@@ -1,0 +1,19 @@
+# instances
+testing1: 172.26.132.253 (coordination_node)
+testing2: 172.26.131.54 (remote_node)
+
+# set up the node
+curl -X POST -H "Content-Type: application/json" http://admin:grp-68@127.0.0.1:5984/_cluster_setup -d '{"action": "enable_cluster", "bind_address":"0.0.0.0", "username": "admin", "password":"grp-68", "node_count":"2"}'
+
+# add a node to the cluster (add remote_node to coordination_node)
+curl -X POST -H "Content-Type: application/json" http://admin:grp-68@172.26.132.253:5984/_cluster_setup -d '{"action": "enable_cluster", "bind_address":"0.0.0.0", "username": "admin", "password":"grp-68", "port": 5984, "node_count": "2", "remote_node": "172.26.131.54", "remote_current_user": "admin", "remote_current_password": "grp-68" }'
+curl -X POST -H "Content-Type: application/json" http://admin:grp-68@172.26.132.253:5984/_cluster_setup -d '{"action": "add_node", "host":"172.26.131.54", "port": 5984, "username": "admin", "password":"grp-68"}'
+
+# complete the cluster setup
+curl -X POST -H "Content-Type: application/json" http://admin:grp-68@172.26.132.253:5984/_cluster_setup -d '{"action": "finish_cluster"}'
+
+# verify install
+curl http://admin:grp-68@172.26.132.253:5984/_cluster_setup
+
+# verify all cluster nodes are connected
+curl http://admin:grp-68@172.26.132.253:5984/_membership
