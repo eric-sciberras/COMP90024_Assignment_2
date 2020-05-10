@@ -29,9 +29,13 @@
 
 ## Running the twitter harvester script
 
-1. **Set up the Environment variables**: Rename `example.env` to `.env` and add the Twitter and slack variables (Slack variable is optional)
+1. Install requirements
+   ``` shell
+   pip3 install -r requirements.txt 
+   ```
+2. **Set up the Environment variables**: Rename `example.env` to `.env` and add the Twitter and slack variables (Slack variable is optional)
    
-2. Run
+3. Run
    ``` shell
    python3 twitter_search.py
    ```
