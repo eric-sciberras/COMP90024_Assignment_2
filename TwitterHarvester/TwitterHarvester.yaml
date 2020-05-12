@@ -1,0 +1,25 @@
+- hosts: COMP90024[0]
+  gather_facts: true
+
+  roles:
+    - role: twitter_search
+
+
+- hosts: COMP90024[1]
+  gather_facts: true
+
+  roles:
+    - role: twitter_stream
+
+
+
+
+
+
+- hosts: localhost
+  vars_files:
+    - host_vars/instance.yaml
+  gather_facts: true
+
+  roles:
+    - role: openstack-common
