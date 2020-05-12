@@ -1,0 +1,4 @@
+- name: Run twitter_search
+  script: /COMP90024_Assignment_2/twitter_search.py
+  args:
+    executable: python3
