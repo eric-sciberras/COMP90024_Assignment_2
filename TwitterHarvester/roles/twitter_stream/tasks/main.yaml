@@ -1,4 +1,4 @@
-- name: Run TwitterHarvester_stream
+- name: Run twitter_stream
   script: /COMP90024_Assignment_2/twitter_stream.py
   args:
     executable: python3
