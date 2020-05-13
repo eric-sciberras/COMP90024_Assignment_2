@@ -13,11 +13,9 @@ def document_format(filePath):
             twitter_list[count] = ","+json_obj
 
     new_twitter_string = '\n'.join(twitter_list)
+    
     new_twitter_file = open(filePath, "w")
-    new_twitter_file.write("{\n\"docs\": [\n")
-    for i in new_twitter_string:
-        new_twitter_file.write(i)
-    new_twitter_file.write("\n]\n}")
+    new_twitter_file.write("{\n\"docs\": [\n"+new_twitter_string+"\n]\n}")
     new_twitter_file.close()
 
 """
