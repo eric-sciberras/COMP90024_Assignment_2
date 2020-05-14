@@ -15,7 +15,7 @@ import itertools
 
 # Our modules
 import utils.twitter_filters as twitter_filters
-from utils.process_tweets import process_tweets
+from utils.process_tweets import process_tweet
 from utils.slack_integration import post_slack_message
 import utils.file_driver as file_driver
 import utils.couchdb_driver as couchdb_driver
@@ -61,6 +61,8 @@ while True:
         geocode = f'{city["latitude"]},{city["longitude"]},40km'
         max_id = file_driver.load_checkpoint(f'{city["name"]}_max_id')
         since_id = file_driver.load_checkpoint(f'{city["name"]}_since_id')
+        # max_id = couchdb_driver.load_checkpoint(f'{city["name"]}_max_id')
+        # since_id = couchdb_driver.load_checkpoint(f'{city["name"]}_since_id')
 
         for i in itertools.count():
             try:
@@ -76,9 +78,12 @@ while True:
 
             if tweets:
                 # Process the tweets and then save them
-                processed_tweets = process_tweets(
-                    [tweet._json for tweet in tweets], city['name'])
-                file_driver.export_tweets(processed_tweets)
+                processed_tweets = [process_tweet(
+                    tweet._json, city['name']) for tweet in tweets]
+
+                for tweet in processed_tweets:
+                    file_driver.export_tweet(tweet)
+                    # couchdb_driver.export_tweet(tweet)
 
                 # House keeping
                 counter += len(tweets)
@@ -89,10 +94,12 @@ while True:
                     since_id_temp = tweets[0]._json['id']
                 max_id = tweets[-1]._json['id'] - 1
                 file_driver.save_checkpoint(f'{city["name"]}_max_id', max_id)
+                # couchdb_driver.save_checkpoint(f'{city["name"]}_max_id', max_id)
             else:
                 print(f"No tweets {city['name']}")
                 time.sleep(5)
-                file_driver.save_checkpoint(
-                        f'{city["name"]}_since_id', since_id_temp)
+                # couchdb_driver.save_checkpoint(f'{city["name"]}_since_id', since_id_temp)
+                # couchdb_driver.save_checkpoint(f'{city["name"]}_max_id', None)
+                file_driver.save_checkpoint(f'{city["name"]}_since_id', since_id_temp)
                 file_driver.save_checkpoint(f'{city["name"]}_max_id', None)
                 break

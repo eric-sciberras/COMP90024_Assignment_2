@@ -7,10 +7,9 @@ import logging
 
 output_file_path = "debug.json"
 
-def export_tweets(tweets):
+def export_tweet(tweet):
     with open(output_file_path, "a") as f:
-        for tweet in tweets:
-            f.write(json.dumps(tweet)+"\n")
+        f.write(json.dumps(tweet)+"\n")
 
 
 def load_checkpoint(city):

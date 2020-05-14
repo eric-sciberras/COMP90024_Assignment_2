@@ -42,4 +42,4 @@ australian_city_geocodes = [
     }
 ]
 
-tags = ['#jobseeker', '#jobkeeper']
+tags = ['jobseeker', 'jobkeeper']
