@@ -1,7 +1,20 @@
 
-def process_tweets(tweets,city):
-    # do the sentiment analysis suttf here
-    for tweet in tweets:
-        tweet['city'] = city
-        print(f'{tweet["id_str"]},{tweet["created_at"]}')
-    return tweets
+# Process tweet takes a python dictionary (the raw twitter json) and adds
+# sentiment analysis and the city field
+def process_tweet(tweet,city):
+    # do the sentiment analysis stuff here
+    tweet['city'] = city
+    return tweet
+
+
+# For testing locally
+import json
+with open('../test_data/tweets.json','r') as f:
+ for tweet in f.readlines():
+    print(tweet)
+    # I just put a placeholder for city
+    with open('processed_tweets.json','w') as out:
+        # json loads to convert string to dictionary
+        # json dumps to convert dictionary to string
+        out.write(json.dumps(process_tweet(json.loads(tweet),"city")))
+
