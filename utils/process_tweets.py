@@ -1,8 +1,13 @@
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 # Process tweet takes a python dictionary (the raw twitter json) and adds
 # sentiment analysis and the city field
 def process_tweet(tweet,city):
     # do the sentiment analysis stuff here
+    analyser = SentimentIntensityAnalyzer()
+    sentiment = analyser.polarity_scores(tweet)
+    
+    tweet['sentiment'] = sentiment
     tweet['city'] = city
     return tweet
 
