@@ -5,9 +5,9 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 def process_tweet(tweet,city):
     # do the sentiment analysis stuff here
     analyser = SentimentIntensityAnalyzer()
-    sentiment = analyser.polarity_scores(tweet)
+    sentiment = analyser.polarity_scores(tweet['full_text'])
     
-    tweet['sentiment'] = sentiment
+    tweet['sentiment'] = sentiment['compound']
     tweet['city'] = city
     return tweet
 
