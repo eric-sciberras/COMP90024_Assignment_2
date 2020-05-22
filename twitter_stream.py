@@ -1,8 +1,3 @@
-'''
-STILL NOT FULLY IMPLEMENTED.
-Doesn't grab tweets over seperate states
-but instead tweets matching a tag
-'''
 
 import sys
 import tweepy
@@ -18,15 +13,13 @@ from tweepy import OAuthHandler
 from tweepy import API
 from tweepy import Stream
 from tweepy.streaming import StreamListener
-
-# logging.basicConfig()
-# logging.getLogger().setLevel(logging.DEBUG)
+import time
 
 # Our modules
 import utils.twitter_filters as twitter_filters
-from utils.process_tweets import process_tweets
+from utils.process_tweets import process_tweet
 from utils.slack_integration import post_slack_message
-import utils.file_driver as file_driver
+# import utils.file_driver as file_driver
 import utils.couchdb_driver as couchdb_driver
 
 # load env vars from .env file
@@ -38,54 +31,63 @@ ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
 ACCESS_TOKEN_SECRET = os.getenv("ACCESS_TOKEN_SECRET")
 CONSUMER_KEY = os.getenv("CONSUMER_KEY")
 CONSUMER_SECRET = os.getenv("CONSUMER_SECRET")
+HARVESTER_ID = os.getenv("HARVESTER_ID")
+PING_EVERY_X_TWEETS = os.getenv("PING_EVERY_X_TWEETS")
 
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
 api = tweepy.API(auth, wait_on_rate_limit=True,
                  wait_on_rate_limit_notify=True)
 
-harvester_id = sys.argv[0]
+post_slack_message(f"Starting Twitter Harvester: {HARVESTER_ID}", HARVESTER_ID)
 
 
 class Listener(StreamListener):
-    def __init__(self, output_file=sys.stdout):
+    def __init__(self, run_time, city, tags):
         super(Listener, self).__init__()
-        self.output_file = output_file
+        self.end_time = time.time() + run_time
+        self.city = city
         self.counter = 0
+        self.tags = tags
 
     # This function handles what we do with an incoming tweet
     def on_status(self, status):
-        processed_tweet = process_tweets(status, "city")
-        file_driver.export_tweets(processed_tweet)
+        print(f"{status.text}")
+        for tag in self.tags:
+            if tag in (status.text).lower():
+                print(f"found tag: {tag}")
+                # print(status._json)
+                print(f"id: {status._json['id_str']}")
+                processed_tweet = process_tweet(
+                    status._json, self.city["name"])
 
-        self.counter += 1
-        if self.counter % 1000 == 0:
-            post_slack_message(
-                f"We now have {self.counter} Tweets.", harvester_id)
+                couchdb_driver.export_tweet(processed_tweet)
+
+                self.counter += 1
+                if self.counter % PING_EVERY_X_TWEETS == 0:
+                    post_slack_message(
+                        f"We now have {self.counter} Tweets.", HARVESTER_ID)
+                break
+
+        if time.time() > self.end_time:
+            print('Completed the Twitter data stream')
+            return False
 
     def on_error(self, status_code):
         post_slack_message(
-            f"Twitter is onto us ABORT ABORT.\n The status code given was {status_code}.", harvester_id)
-        print(status_code)
-        return False
+            f"Twitter is onto us ABORT ABORT.\n The status code given was {status_code}.", HARVESTER_ID)
 
 
-tags = ['#jobseeker', '#jobkeeper']
-# tags = ['#jobseeker', '#jobkeeper', '#job-seeker', '#job-keeper',
-#         'jobseeker', 'jobkeeper', 'job-seeker', 'job-keeper', 'job seeker', 'job keeper']
-australia_bounding_box = [113.338953078, -
-                          43.6345972634, 153.569469029, -10.6681857235]
-print('Start streaming.')
-post_slack_message(f"We are up and running!!!",harvester_id)
-output = open('jobseeker-jobkeeper.txt', 'a')
-listener = Listener(output_file=output)
-
-try:
-    stream = Stream(auth=api.auth, listener=listener)
-    stream.filter(languages=['en'], track=tags)
-except KeyboardInterrupt:
-    print('Stopping')
-finally:
-    post_slack_message(f"Restart me.",harvester_id)
-    stream.disconnect()
-    output.close()
+while True:
+    try:
+        # Pick a city
+        city = random.choice(twitter_filters.australian_city_geocodes)
+        print(f'{city["name"]} has been chosen')
+        l = Listener(run_time=600,
+                     city=city, tags=twitter_filters.tags)
+        stream = Stream(auth=api.auth, listener=l, tweet_mode='extended')
+        stream.filter(languages=['en'], locations=city['bounding_box'])
+        break
+    except Exception as e:
+        print(repr(e))
+        post_slack_message(f"Twitter error: {repr(e)}", HARVESTER_ID)

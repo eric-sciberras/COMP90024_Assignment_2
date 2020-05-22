@@ -1,19 +1,23 @@
-from slack import WebClient
-from slack.errors import SlackApiError
+import requests
 from dotenv import load_dotenv
 import os
+import json
 
 load_dotenv()
 
 # Slack Integration - Will send us messages (its optional)
-SLACK_TOKEN = os.getenv("SLACK_TOKEN")
-client = WebClient(
-    token=SLACK_TOKEN)
+SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL")
 
 
 def post_slack_message(text, id):
+    data = {
+        'text': text,
+        'username': f'Twitter Harvester {id}',
+        'icon_emoji': ':robot_face:'
+    }
     try:
-        client.chat_postMessage(
-            channel='#twitter-updates', text=text)
+        response = requests.post(SLACK_WEBHOOK_URL, json=data, headers={
+            'Content-Type': 'application/json'})
     except:
         pass
+

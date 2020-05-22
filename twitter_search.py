@@ -29,6 +29,7 @@ ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
 ACCESS_TOKEN_SECRET = os.getenv("ACCESS_TOKEN_SECRET")
 CONSUMER_KEY = os.getenv("CONSUMER_KEY")
 CONSUMER_SECRET = os.getenv("CONSUMER_SECRET")
+HARVESTER_ID = os.getenv("HARVESTER_ID")
 
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
@@ -37,11 +38,9 @@ api = tweepy.API(auth, wait_on_rate_limit=True,
 
 counter = 0
 max_id = 0
-harvester_id = sys.argv[0]
-iterations_per_choice = 1
 search_query = f"{' OR '.join(twitter_filters.tags)}"
 
-post_slack_message(f"Starting Twitter Harvester: {harvester_id}", harvester_id)
+post_slack_message(f"Starting Twitter Harvester: {HARVESTER_ID}", HARVESTER_ID)
 
 '''
 The Twitter havester works by grabbing the lastest tweets given by the /search endpoint. 
@@ -56,8 +55,8 @@ We run phase 1 for each city, then move to phase 2
 '''
 
 while True:
-
-    for city in twitter_filters.australian_city_geocodes:
+    city = random.choice(twitter_filters.australian_city_geocodes)
+    while True:
         geocode = f'{city["latitude"]},{city["longitude"]},40km'
         max_id = file_driver.load_checkpoint(f'{city["name"]}_max_id')
         since_id = file_driver.load_checkpoint(f'{city["name"]}_since_id')
@@ -71,7 +70,7 @@ while True:
                                     geocode=geocode, since_id=since_id, max_id=max_id, result_type='recent')
             except tweepy.TweepError as e:
                 print(repr(e))
-                post_slack_message(f"Twitter error: {repr(e)}", harvester_id)
+                post_slack_message(f"Twitter error: {repr(e)}", HARVESTER_ID)
 
             logging.info(
                 f'we got {len(tweets)} tweets for state {city["name"]}')
@@ -89,7 +88,7 @@ while True:
                 counter += len(tweets)
                 if counter % 1000 == 0:
                     post_slack_message(
-                        f"We now have {counter} Tweets.", harvester_id)
+                        f"We now have {counter} Tweets.", HARVESTER_ID)
                 if (i == 0):
                     since_id_temp = tweets[0]._json['id']
                 max_id = tweets[-1]._json['id'] - 1
@@ -100,6 +99,7 @@ while True:
                 time.sleep(5)
                 # couchdb_driver.save_checkpoint(f'{city["name"]}_since_id', since_id_temp)
                 # couchdb_driver.save_checkpoint(f'{city["name"]}_max_id', None)
-                file_driver.save_checkpoint(f'{city["name"]}_since_id', since_id_temp)
+                file_driver.save_checkpoint(
+                    f'{city["name"]}_since_id', since_id_temp)
                 file_driver.save_checkpoint(f'{city["name"]}_max_id', None)
                 break
