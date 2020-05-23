@@ -19,7 +19,6 @@ import time
 import utils.twitter_filters as twitter_filters
 from utils.process_tweets import process_tweet
 from utils.slack_integration import post_slack_message
-# import utils.file_driver as file_driver
 import utils.couchdb_driver as couchdb_driver
 
 # load env vars from .env file
@@ -52,11 +51,9 @@ class Listener(StreamListener):
 
     # This function handles what we do with an incoming tweet
     def on_status(self, status):
-        print(f"{status.text}")
         for tag in self.tags:
-            if tag in (status.text).lower():
+            if tag.lower() in (status.text).lower():
                 print(f"found tag: {tag}")
-                # print(status._json)
                 print(f"id: {status._json['id_str']}")
                 processed_tweet = process_tweet(
                     status._json, self.city["name"])
@@ -64,7 +61,7 @@ class Listener(StreamListener):
                 couchdb_driver.export_tweet(processed_tweet)
 
                 self.counter += 1
-                if self.counter % PING_EVERY_X_TWEETS == 0:
+                if self.counter % int(PING_EVERY_X_TWEETS) == 0:
                     post_slack_message(
                         f"We now have {self.counter} Tweets.", HARVESTER_ID)
                 break
@@ -75,7 +72,7 @@ class Listener(StreamListener):
 
     def on_error(self, status_code):
         post_slack_message(
-            f"Twitter is onto us ABORT ABORT.\n The status code given was {status_code}.", HARVESTER_ID)
+            f"The status code given was {status_code}.", HARVESTER_ID)
 
 
 while True:

@@ -13,9 +13,9 @@ PASSWORD = os.getenv("COUCHDB_PASSWORD")
 
 couch = CouchDB(USERNAME,PASSWORD,url=COUCH_URL, connect=True, auto_renew=True)
 
-couch.create_database('twitter_data_2')
+couch.create_database('twitter_data')
 couch.create_database('twitter_harvester_checkpoint')
-tweets_db = couch['twitter_data_2']
+tweets_db = couch['twitter_data']
 harvester_checkpoint = couch['twitter_harvester_checkpoint']
 
 def export_tweet(tweet):
