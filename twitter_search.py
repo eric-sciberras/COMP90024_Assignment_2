@@ -56,50 +56,50 @@ We run phase 1 for each city, then move to phase 2
 
 while True:
     city = random.choice(twitter_filters.australian_city_geocodes)
-    while True:
-        geocode = f'{city["latitude"]},{city["longitude"]},40km'
-        max_id = file_driver.load_checkpoint(f'{city["name"]}_max_id')
-        since_id = file_driver.load_checkpoint(f'{city["name"]}_since_id')
-        # max_id = couchdb_driver.load_checkpoint(f'{city["name"]}_max_id')
-        # since_id = couchdb_driver.load_checkpoint(f'{city["name"]}_since_id')
+    geocode = f'{city["latitude"]},{city["longitude"]},40km'
+    # max_id = file_driver.load_checkpoint(f'{city["name"]}_max_id')
+    # since_id = file_driver.load_checkpoint(f'{city["name"]}_since_id')
+    max_id = couchdb_driver.load_checkpoint(f'{city["name"]}_max_id')
+    since_id = couchdb_driver.load_checkpoint(f'{city["name"]}_since_id')
 
-        for i in itertools.count():
-            try:
-                logging.info(f'calling twitter search api')
-                tweets = api.search(q=search_query, lang="en", count=100, tweet_mode='extended',
-                                    geocode=geocode, since_id=since_id, max_id=max_id, result_type='recent')
-            except tweepy.TweepError as e:
-                print(repr(e))
-                post_slack_message(f"Twitter error: {repr(e)}", HARVESTER_ID)
+    for i in itertools.count():
+        try:
+            logging.info(f'calling twitter search api')
+            tweets = api.search(q=search_query, lang="en", count=100, tweet_mode='extended',
+                                geocode=geocode, since_id=since_id, max_id=max_id, result_type='recent')
+        except tweepy.TweepError as e:
+            print(repr(e))
+            post_slack_message(f"Twitter error: {repr(e)}", HARVESTER_ID)
 
-            logging.info(
-                f'we got {len(tweets)} tweets for state {city["name"]}')
+        logging.info(
+            f'we got {len(tweets)} tweets for state {city["name"]}')
 
-            if tweets:
-                # Process the tweets and then save them
-                processed_tweets = [process_tweet(
-                    tweet._json, city['name']) for tweet in tweets]
+        if tweets:
+            # Process the tweets and then save them
+            processed_tweets = [process_tweet(
+                tweet._json, city['name']) for tweet in tweets]
 
-                for tweet in processed_tweets:
-                    file_driver.export_tweet(tweet)
-                    # couchdb_driver.export_tweet(tweet)
+            for tweet in processed_tweets:
+                # file_driver.export_tweet(tweet)
+                couchdb_driver.export_tweet(tweet)
 
-                # House keeping
-                counter += len(tweets)
-                if counter % 1000 == 0:
-                    post_slack_message(
-                        f"We now have {counter} Tweets.", HARVESTER_ID)
-                if (i == 0):
-                    since_id_temp = tweets[0]._json['id']
-                max_id = tweets[-1]._json['id'] - 1
-                file_driver.save_checkpoint(f'{city["name"]}_max_id', max_id)
-                # couchdb_driver.save_checkpoint(f'{city["name"]}_max_id', max_id)
-            else:
-                print(f"No tweets {city['name']}")
-                time.sleep(5)
-                # couchdb_driver.save_checkpoint(f'{city["name"]}_since_id', since_id_temp)
-                # couchdb_driver.save_checkpoint(f'{city["name"]}_max_id', None)
-                file_driver.save_checkpoint(
-                    f'{city["name"]}_since_id', since_id_temp)
-                file_driver.save_checkpoint(f'{city["name"]}_max_id', None)
-                break
+            # House keeping
+            counter += len(tweets)
+            if counter % 1000 == 0:
+                post_slack_message(
+                    f"We now have {counter} Tweets.", HARVESTER_ID)
+            if (i == 0):
+                since_id_temp = tweets[0]._json['id']
+            max_id = tweets[-1]._json['id'] - 1
+            # file_driver.save_checkpoint(f'{city["name"]}_max_id', max_id)
+            couchdb_driver.save_checkpoint(f'{city["name"]}_max_id', max_id)
+        else:
+            print(f"No tweets {city['name']}")
+            time.sleep(5)
+            couchdb_driver.save_checkpoint(
+                f'{city["name"]}_since_id', since_id_temp)
+            couchdb_driver.save_checkpoint(f'{city["name"]}_max_id', None)
+            # file_driver.save_checkpoint(
+            #     f'{city["name"]}_since_id', since_id_temp)
+            # file_driver.save_checkpoint(f'{city["name"]}_max_id', None)
+            break
