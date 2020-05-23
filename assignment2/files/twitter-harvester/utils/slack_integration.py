@@ -20,4 +20,3 @@ def post_slack_message(text, id):
             'Content-Type': 'application/json'})
     except:
         pass
-
