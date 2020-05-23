@@ -1,0 +1,17 @@
+[couchdb-instances]
+
+[twitter-harvester-instances]
+
+[dashboard-instances]
+
+[unimelb-comp90024-2020-grp-68:children]
+couchdb-instances
+twitter-harvester-instances
+dashboard-instances
+
+[COMP90024-Assignment-2:vars]
+ansible_python_interpreter=/usr/bin/python3
+ansible_user=ubuntu
+ansible_ssh_private_key_file=~/.ssh/assignment2.pem
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+

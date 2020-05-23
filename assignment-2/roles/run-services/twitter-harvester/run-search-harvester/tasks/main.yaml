@@ -1,0 +1,27 @@
+---
+- name: Retrive index of host
+  set_fact:
+    host_index: "{{ groups['couchdb-instances'].index(inventory_hostname) }}"
+
+- name: Copy Twitter Harvester code
+  copy:
+    src: "{{playbook_dir}}/files/"
+    dest: $HOME/twitter_harvester
+
+- name: Install Twitter Harvester dependencies
+  pip:
+    requirements: $HOME/twitter_harvester/requirements.txt
+
+- name: Start Twitter Harvester
+  shell: ( ( nohup python3 $HOME/twitter_harvester/twitter_search.py 1>/dev/null 2>&1 ) & )
+  environment:
+    ACCESS_TOKEN: "{{ twitter_credentials.ACCESS_TOKEN[ host_index | int ] }}"
+    ACCESS_TOKEN_SECRET: "{{ twitter_credentials.ACCESS_TOKEN_SECRET[ host_index | int ] }}"
+    CONSUMER_KEY: "{{ twitter_credentials.CONSUMER_KEY[ host_index | int ] }}"
+    CONSUMER_SECRET: "{{ twitter_credentials.CONSUMER_SECRET[ host_index | int ] }}"
+    SLACK_WEBHOOK_URL: "{{ SLACK_WEBHOOK_URL }}"
+    COUCHDB_URL: http://localhost:5984
+    COUCHDB_USERNAME: "{{ couchdb_username }}"
+    COUCHDB_PASSWORD: "{{ couchdb_password }}"
+    HARVESTER_ID: "{{ host_index }}"
+    PING_EVERY_X_TWEETS: "{{ PING_EVERY_X_TWEETS }}"
