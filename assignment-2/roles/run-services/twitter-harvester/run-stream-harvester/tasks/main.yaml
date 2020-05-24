@@ -27,8 +27,7 @@
     requirements: /opt/twitter-harvester/requirements.txt
 
 - name: Start Twitter Harvester
-  shell: ( ( nohup python3 /opt/twitter-harvester/twitter_search.py 1>/dev/null 2>&1 ) & )
-  # shell: python3 $HOME/twitter-harvester/twitter_search.py
+  shell: ( ( nohup python3 /opt/twitter-harvester/twitter_stream.py 1>/dev/null 2>&1 ) & )
   environment:
     ACCESS_TOKEN: "{{ twitter_credentials.access_token[ host_index | int ] }}"
     ACCESS_TOKEN_SECRET: "{{ twitter_credentials.access_token_secret[ host_index | int ] }}"
@@ -38,5 +37,5 @@
     COUCHDB_URL: http://localhost:{{ couchdb_port }}
     COUCHDB_USERNAME: "{{ couchdb_username }}"
     COUCHDB_PASSWORD: "{{ couchdb_password }}"
-    HARVESTER_ID: "search_harvester_{{ host_index }}"
+    HARVESTER_ID: "stream_harvester_{{ host_index }}"
     PING_EVERY_X_TWEETS: "{{ ping_every_x_tweets }}"

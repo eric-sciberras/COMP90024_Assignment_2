@@ -14,7 +14,7 @@ volumes:
 instances:
   - name: couchdb-twitter-harvester-01
     volumes: ["couchdb-twitter-harvester-01-vol-01"]
-  - name: couchdb-harvester-02
+  - name: couchdb-twitter-harvester-02
     volumes: ["couchdb-twitter-harvester-02-vol-01"]
   - name: couchdb-twitter-harvester-03
     volumes: ["couchdb-twitter-harvester-03-vol-01"]
@@ -31,14 +31,14 @@ security_groups:
     port_range_min: 22
     port_range_max: 22
     remote_ip_prefix: 0.0.0.0/0
-  - name: demo_http
-    description: "Demo security group for HTTP"
+  - name: http
+    description: "Security group for HTTP access"
     protocol: tcp
     port_range_min: 80
     port_range_max: 80
     remote_ip_prefix: 0.0.0.0/0
-  - name: demo_https
-    description: "Demo security group for HTTPS"
+  - name: https
+    description: "Security group for HTTPS access"
     protocol: tcp
     port_range_min: 443
     port_range_max: 443
@@ -61,4 +61,3 @@ security_groups:
     port_range_min: 9100
     port_range_max: 9100
     remote_ip_prefix: 0.0.0.0/0
-

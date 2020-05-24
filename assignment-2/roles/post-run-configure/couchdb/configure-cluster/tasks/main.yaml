@@ -1,7 +1,7 @@
 ---
 - name: Enable Cluster Mode
   uri:
-    url: http://{{ groups['couchdb-instances'][0] }}:{{ couchdb_port }}/_cluster_setup
+    url: http://{{ groups['couchdb_instances'][0] }}:{{ couchdb_port }}/_cluster_setup
     method: POST
     user: "{{ couchdb_username }}"
     password: "{{ couchdb_password }}"
@@ -21,14 +21,14 @@
       remote_current_password: "{{ couchdb_password }}"
     body_format: json
     status_code: 201
-  with_items: "{{ groups['couchdb-instances'] }}"
-  when: item != groups['couchdb-instances'][0]
+  with_items: "{{ groups['couchdb_instances'] }}"
+  when: item != groups['couchdb_instances'][0]
   loop_control:
     extended: yes
 
 - name: Add Node
   uri:
-    url: http://{{ groups['couchdb-instances'][0] }}:{{ couchdb_port }}/_cluster_setup
+    url: http://{{ groups['couchdb_instances'][0] }}:{{ couchdb_port }}/_cluster_setup
     method: POST
     user: "{{ couchdb_username }}"
     password: "{{ couchdb_password }}"
@@ -44,14 +44,14 @@
       host: "{{ item }}"
     body_format: json
     status_code: 201
-  with_items: "{{ groups['couchdb-instances'] }}"
-  when: item != groups['couchdb-instances'][0]
+  with_items: "{{ groups['couchdb_instances'] }}"
+  when: item != groups['couchdb_instances'][0]
   loop_control:
     extended: yes
 
 - name: Send empty GET request to prevent error
   uri:
-    url: http://{{ groups['couchdb-instances'][0] }}:{{ couchdb_port }}/
+    url: http://{{ groups['couchdb_instances'][0] }}:{{ couchdb_port }}/
     method: GET
     user: "{{ couchdb_username }}"
     password: "{{ couchdb_password }}"
@@ -60,7 +60,7 @@
 
 - name: Finish Cluster
   uri:
-    url: http://{{ groups['couchdb-instances'][0] }}:{{ couchdb_port }}/_cluster_setup
+    url: http://{{ groups['couchdb_instances'][0] }}:{{ couchdb_port }}/_cluster_setup
     method: POST
     user: "{{ couchdb_username }}"
     password: "{{ couchdb_password }}"

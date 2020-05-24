@@ -1,6 +1,9 @@
 # Common vars
 availability_zone: melbourne-qh2-uom
 
+# Volume
+volumes:
+
 # Instance
 instances:
   - name: dashboard-01

@@ -1,4 +1,6 @@
-- name: Insert a line at the end of a file.
+---
+
+- name: Add proxies to instance
   become: yes  
   blockinfile:
     path: /etc/environment
