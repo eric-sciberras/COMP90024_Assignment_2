@@ -41,22 +41,23 @@ request.put(url + db, function(err, resp, body) {
 
 //module.exports = request;
 
-const nano = require('nano')('http://admin:comp90024@localhost:5984');
+//not used
+const view = "172.26.132.103:5984/_utils/#/database/twitter-search/_design/location/_view/mel-pos?reduce=true";
 
-const view = "127.0.0.1:5984/_utils/#/database/twitter-search/_design/language/_view/en-pos?reduce=true";
+const nano = require('nano')('http://admin:instance1@172.26.132.103:5984');
 
 // get a database
 const twitter_search = nano.use('twitter-search');
 
-//get a couchdb view
-twitter_search.view('language', 'en-pos').then((body) => {
+//get a couchdb view (a bunch of tweets)
+twitter_search.view('location', 'mel-pos').then((body) => {
     body.rows.forEach((doc) => {
         console.log(doc.value);
     });
 });
 
-//get a couchdb document (tweet)
-twitter_search.get('4b69a748d9989f6f61189b180a0000a8').then((body)=>{
+//get a couchdb document (a tweet)
+twitter_search.get('5703b847514f584955956d187300384a').then((body)=>{
     console.log(body);
 });
 
