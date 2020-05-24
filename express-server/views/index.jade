@@ -1,0 +1,25 @@
+extends layout
+
+block content
+    h1= title
+    p Welcome to #{title}
+    #chart(style="width: 600px; height: 400px;")
+        script.
+            var chartoptions = !{dataa};
+
+            var chart = echarts.init(document.getElementById('chart'));
+            chart.setOption(chartoptions);
+
+
+
+//block content
+  h1 #{title}
+  //p Welcome to #{title}
+  p word cloud
+  img(src='./image.png')
+  p #{view}
+
+
+
+
+
