@@ -12,7 +12,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/vue" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1cKxO7VxYZ4WdKZdRUsNdWok64C" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -62,7 +62,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1590291050340</updated>
-      <workItem from="1590291052223" duration="1163000" />
+      <workItem from="1590291052223" duration="1365000" />
     </task>
     <servers />
   </component>
