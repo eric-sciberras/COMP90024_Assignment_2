@@ -206,13 +206,13 @@ const melSum = "http://admin:instance1@172.26.132.103:5984/twitter-search/_desig
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             var json = JSON.parse(this.response);
+            
             // Map JSON labels  back to values array
-
-
             var labels = json.rows.map(function (e) {
                 return e.key;
-
             });
+            
+            //Map JSON values back to values array
             var values = json.rows.map(function (e) {
                 return e.value;
             });
