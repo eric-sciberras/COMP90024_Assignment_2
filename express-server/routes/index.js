@@ -5,13 +5,12 @@ const rp = require('request-promise');
 //const locSent = "http://admin:instance1@172.26.132.103:5984/twitter-search/_design/location/_view/locationSent?limit=5";
 const locationSentiment = "http://admin:instance1@172.26.132.103:5984/twitter_data/_design/byLocation/_view/location-sentiment?group=true";
 const dateSentiment = "http://admin:instance1@172.26.132.103:5984/twitter_data/_design/byDate/_view/date-sentiment?limit=100"
-//const melSentiment = "http://admin:instance1@172.26.132.103:5984/twitter_data/_design/byLocation/_view/mel-sentiment";
-let labels;
-let values;
+const melSentiment = "http://admin:instance1@172.26.132.103:5984/twitter_data/_design/byLocation/_view/mel-sentiment";
+let location;
+let avgSentiment;
 let date;
 let sentiment;
-//let location;
-//let prop;
+
 //const axios = require('axios');
 //const requestUrl = "http://172.26.132.103:5984/twitter-search/_design/location/_view/locationSent"
 
@@ -21,10 +20,10 @@ router.get('/', function(req, res, next) {
     // average sentiment per location
     rp(locationSentiment).then((response) => {
         var json = JSON.parse(response);
-        labels = json.rows.map(function (e){
+        location = json.rows.map(function (e){
             return e.key;
         });
-        values = json.rows.map(function (e){
+        avgSentiment = json.rows.map(function (e){
             var sum = e.value.sum;
             var count = e.value.count;
             return sum/count;
@@ -40,14 +39,13 @@ router.get('/', function(req, res, next) {
                 return e.value;
             });
 
-            res.render('index', { title: 'Dashboard', labels: labels, values: values, date: date,
+            res.render('index', { title: 'Dashboard', location: location, avgSentiment: avgSentiment, date: date,
                 sentiment: sentiment});
         });
     });
 });
 
 module.exports = router;
-
 
 /*
 //get a couchdb document (a tweet)
