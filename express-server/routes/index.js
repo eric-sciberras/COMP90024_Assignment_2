@@ -1,14 +1,28 @@
 const express = require('express');
 const router = express.Router();
 
+const locSent = "http://admin:instance1@172.26.132.103:5984/twitter-search/_design/location/_view/locationSent?limit=5";
+const rp = require('request-promise');
+let labels;
+let values;
+//const axios = require('axios');
+//const requestUrl = "http://172.26.132.103:5984/twitter-search/_design/location/_view/locationSent"
+
 /* GET home page. */
-
 router.get('/', function(req, res, next) {
-    res.render('index', { title: 'Dashboard', view: twitter_search});
+    rp(locSent).then((response) => {
+        var json = JSON.parse(response);
+        labels = json.rows.map(function (e){
+            return e.key;
+        });
+        values = json.rows.map(function (e){
+            return e.value;
+        });
+        res.render('index', { title: 'Dashboard', label: labels, value: values});
+    });
+
 });
-
 module.exports = router;
-
 
 
 
@@ -36,13 +50,14 @@ request.put(url + db, function(err, resp, body) {
         })
     })
 })
-
+module.exports = request;
  */
 
-//module.exports = request;
-
-//not used
-const view = "172.26.132.103:5984/_utils/#/database/twitter-search/_design/location/_view/mel-pos?reduce=true";
+/*
+//get a couchdb document (a tweet)
+twitter_search.get('5703b847514f584955956d187300384a').then((body)=>{
+    console.log(body);
+});
 
 const nano = require('nano')('http://admin:instance1@172.26.132.103:5984');
 
@@ -56,13 +71,6 @@ twitter_search.view('location', 'mel-pos').then((body) => {
     });
 });
 
-//get a couchdb document (a tweet)
-twitter_search.get('5703b847514f584955956d187300384a').then((body)=>{
-    console.log(body);
-});
-
-
-/*
 var responses_x_questions = require('../reports/barChart.json');
 var clone = require('clone');
 
