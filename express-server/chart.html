@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+    <title>Chart</title>
+</head>
+<script>
+<canvas id="myChart" width="500" height="300"></canvas>
+<script>
+    var ctx1 = document.getElementById('myChart');
+    var myChart = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+            labels: ['Melbourne', 'Sydney', 'Brisbane', 'Perth', 'Adelaide', 'Canberra'],
+            datasets: [{
+                label: 'Sentiment',
+                data: [7, 12, 3, 5, 2, 3],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            responsive: false,
+            maintainAspectRatio: false,
+            title:{
+                display:true,
+                text:'Location Sentiment',
+                fontSize:16
+            },
+            layout:{
+                padding:{
+                    left:50,
+                    right:0,
+                    bottom:0,
+                    top:0
+                }
+            }
+        }
+    });
+</script>
+<canvas id="myLine" width="500" height="300"></canvas>
+<script>
+    var ctx2 = document.getElementById('myLine');
+    var myLine = new Chart(ctx2, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+            datasets: [{
+                label: 'Sentiment',
+                data: [0, -0.8, 0.3, 0.5, -0.2],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            responsive: false,
+            maintainAspectRatio: false,
+            title:{
+                display:true,
+                text:'Historical Sentiment',
+                fontSize:16
+            },
+            layout:{
+                padding:{
+                    left:50,
+                    right:0,
+                    bottom:0,
+                    top:0
+                }
+            }
+        }
+    });
+</script>
+<canvas id="myChart1" width="500" height="300"></canvas>
+<script>
+    function BuildChart(labels, values, chartTitle){
+        var data = {
+            labels: labels,
+            datasets: [{
+                label: chartTitle, // Name the series
+                data: values,
+                backgroundColor: [
+                    'rgb(54, 162, 235)',
+                    'rgb(54, 162, 235)',
+                    'rgb(54, 162, 235)',
+                    'rgb(54, 162, 235)',
+                    'rgb(54, 162, 235)',
+                ],
+            }],
+        };
+        var ctx = document.getElementById("myChart1").getContext('2d');
+        var myChart1 = new Chart(ctx, {
+            type: 'bar',
+            data: data,
+            options: {
+                responsive: false, // Instruct chart JS to respond nicely.
+                maintainAspectRatio: false, // Add to prevent default behavior of full-width/height
+                scales: {
+                    xAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: '$ Billion'
+                        }
+                    }],
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Name'
+                        }
+                    }]
+                },
+                layout:{
+                    padding:{
+                        left:50,
+                        right:0,
+                        bottom:0,
+                        top:0
+                    }
+                }
+            }
+        });
+        return myChart1;
+    }
+    /*
+const melSum = "http://admin:instance1@172.26.132.103:5984/twitter-search/_design/location/_view/melSum?reduce=true";
+    const melCount = "http://admin:instance1@172.26.132.103:5984/twitter-search/_design/location/_view/melCount?reduce=true";
+    const rp = require('request-promise');
+    //var the_avgs = avg(rp, melCount, melSum);
+    var the_avgs = [3,0];
+    var the_labels = ['Mel', 'Syd'];
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            BuildChart(the_labels, the_avgs, "Real Time Net Worth");
+        }
+    }
+    /
+     */
+    /*
+    const rp = require('request-promise');
+    const request  = require('request');
+    const melSum = "http://admin:instance1@172.26.132.103:5984/twitter-search/_design/location/_view/locationSent?limit=5";
+    rp(melSum).then((melsum) => {
+        var json_sum = JSON.parse(melsum);
+        var labels = json_sum.rows.map(function (e){
+            return e.key;
+        });
+        var values = json_sum.rows.map(function (e){
+            return e.value;
+        });
+        BuildChart(labels, values, "Real Time Net Worth");
+    })
+    .catch(function (err) {
+        var labels = ["failed"];
+        var values = [5];
+        console.log("failed");// Crawling failed...
+        BuildChart(labels, values, "Real Time Net Worth");
+    });
+     */
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            var json = JSON.parse(this.response);
+            // Map JSON labels  back to values array
+
+
+            var labels = json.rows.map(function (e) {
+                return e.key;
+
+            });
+            var values = json.rows.map(function (e) {
+                return e.value;
+            });
+            BuildChart(labels, values, "Chart Name"); // Pass in data and call the chart
+        }
+    };
+    xhttp.open("GET", "http://admin:instance1@172.26.132.103:5984/twitter-search/_design/location/_view/locationSent?limit=5", true);
+    xhttp.withCredentials = true;
+    //xhttp.setRequestHeader("Authorization", "Basic " + btoa('admin' + ":" + 'instance1'));
+    //xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xhttp.send(null);
+
+</script>
+
+</body>
+</html>
