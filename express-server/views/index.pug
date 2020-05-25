@@ -4,8 +4,8 @@ block content
     //h1= title
     canvas#byLocation(width='500', height='300')
     script.
-        var labels = !{JSON.stringify(labels)};
-        var values = !{JSON.stringify(values)};
+        var labels = !{JSON.stringify(location)};
+        var values = !{JSON.stringify(avgSentiment)};
         var ctx1 = document.getElementById('byLocation');
         var byLocation = new Chart(ctx1, {
             type: 'bar',
