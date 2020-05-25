@@ -2,22 +2,67 @@ extends layout
 
 block content
     h1= title
-    p Welcome to #{title}
-    #chart(style="width: 600px; height: 400px;")
+    p !{label}
+    p !{value}
+    #myChart(style="width: 600px; height: 400px;")
         script.
-            var chartoptions = !{dataa};
+            var label = !{label}, value = !{value};
+            var ctx = document.getElementById('myChart');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: label,
+                    datasets: [{
+                        label: 'Sentiment',
+                        data: value,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        xAxes: [{
+                            scaleLabel: {
+                                display: true
+                            }
+                        }],
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    },
+                    responsive: false,
+                    maintainAspectRatio: false,
+                    title: {
+                        display: true,
+                        text: 'Historical Sentiment',
+                        fontSize: 16
+                    },
+                    layout: {
+                        padding: {
+                            left: 50,
+                            right: 0,
+                            bottom: 0,
+                            top: 0
+                        }
+                    }
+                }
+            });
 
-            var chart = echarts.init(document.getElementById('chart'));
-            chart.setOption(chartoptions);
-
-
-
-//block content
-  h1 #{title}
-  //p Welcome to #{title}
-  p word cloud
-  img(src='./image.png')
-  p #{view}
 
 
 
