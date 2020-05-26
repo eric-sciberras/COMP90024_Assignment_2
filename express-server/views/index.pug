@@ -8,7 +8,7 @@ block content
         var values = !{JSON.stringify(avgSentiment)};
         var ctx1 = document.getElementById('byLocation');
         var byLocation = new Chart(ctx1, {
-            type: 'bar',
+            type: 'line',
             data: {
                 labels: labels,
                 datasets: [{
@@ -82,7 +82,7 @@ block content
             data: {
                 labels: lables,
                 datasets: [{
-                    label: 'Sentiment',
+                    label: 'Avg Sentiment',
                     data: values,
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)'
@@ -107,7 +107,7 @@ block content
                         },
                         scaleLabel: {
                             display: true,
-                            labelString: 'Sentiment'
+                            labelString: 'Average Sentiment'
                         }
                     }]
                 },
@@ -128,3 +128,77 @@ block content
                 }
             }
         });
+
+    canvas#byProp(width='500', height='300')
+        script.
+            var labels = !{JSON.stringify(location)};
+            var values = !{JSON.stringify(prop)};
+            var ctx3 = document.getElementById('byProp');
+            var byProp = new Chart(ctx3, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '% of #Jobseeker/Jobkeeper Tweets',
+                        labelColor: 'rgba(108,120,104,0.31)',
+                        data: values,
+                        backgroundColor: [
+                            'rgba(21,31,120,0.31)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)',
+                            'rgb(38,255,161, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(21,31,120,1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgb(38,255,161, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        xAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Location'
+                            }
+                        }],
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: '% of Tweets '
+                            }
+                        }]
+                    },
+                    responsive: false,
+                    maintainAspectRatio: false,
+                    title: {
+                        display: true,
+                        text: 'Location Tweets',
+                        fontSize: 16
+                    },
+                    layout: {
+                        padding: {
+                            left: 50,
+                            right: 0,
+                            bottom: 0,
+                            top: 0
+                        }
+                    },
+                    Legend: {
+                        position: 'right'
+                    }
+                }
+            });
+
