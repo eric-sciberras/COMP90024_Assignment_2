@@ -1,9 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const rp = require('request-promise');
+const dotenv = require('dotenv').config();
 
-const locationSentiment = "http://admin:instance1@172.26.132.103:5984/twitter_data/_design/byLocation/_view/location-sentiment?group=true";
-const dateSentiment = "http://admin:instance1@172.26.132.103:5984/twitter_data/_design/byDate/_view/date-sentiment?group=true"
+const couchdb_url = process.env.COUCHDB_URL
+const couchdb_port = process.env.COUCHDB_PORT
+const coudchdb_username = process.env.COUCHDB_USERNAME
+const couchdb_password = process.env.COUCHDB_PASSWORD
+
+const locationSentiment = `http://${coudchdb_username}:${couchdb_password}@${couchdb_url}:${couchdb_port}/twitter_data/_design/byLocation/_view/location-sentiment?group=true`;
+const dateSentiment = `http://${coudchdb_username}:${couchdb_password}@${couchdb_url}:${couchdb_port}/twitter_data/_design/byDate/_view/date-sentiment?group=true`
 let location;
 let avgSentiment;
 let date;
@@ -12,7 +18,6 @@ let tweets;
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-
     // average sentiment per location
     rp(locationSentiment).then((response) => {
         var json = JSON.parse(response);
