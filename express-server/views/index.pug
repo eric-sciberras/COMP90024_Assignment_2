@@ -129,17 +129,17 @@ block content
             }
         });
 
-    canvas#byProp(width='500', height='300')
+    canvas#tweetsPerLocation(width='500', height='300')
         script.
             var labels = !{JSON.stringify(location)};
-            var values = !{JSON.stringify(prop)};
-            var ctx3 = document.getElementById('byProp');
-            var byProp = new Chart(ctx3, {
+            var values = !{JSON.stringify(tweets)};
+            var ctx3 = document.getElementById('tweetsPerLocation');
+            var tweetsPerLocation = new Chart(ctx3, {
                 type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: '% of #Jobseeker/Jobkeeper Tweets',
+                        label: '#jobseeker/#jobkeeper Tweets',
                         labelColor: 'rgba(108,120,104,0.31)',
                         data: values,
                         backgroundColor: [
@@ -177,7 +177,7 @@ block content
                             },
                             scaleLabel: {
                                 display: true,
-                                labelString: '% of Tweets '
+                                labelString: 'Number of Tweets '
                             }
                         }]
                     },
