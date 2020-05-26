@@ -8,7 +8,7 @@ let location;
 let avgSentiment;
 let date;
 let sentiment;
-let prop;
+let tweets;
 
 //const axios = require('axios');
 //const requestUrl = "http://172.26.132.103:5984/twitter-search/_design/location/_view/locationSent"
@@ -43,6 +43,7 @@ router.get('/', function(req, res, next) {
             // proportion of tweets per location
             rp(locationSentiment).then((response) => {
                 var json = JSON.parse(response);
+                /*
                 var counts = 0;
                 for(var i=0; i<json.rows.length; i++){
                     counts+=json.rows[i].value.count;
@@ -50,8 +51,12 @@ router.get('/', function(req, res, next) {
                 prop = json.rows.map(function (e){
                     return Math.round((e.value.count/counts)*100);
                 });
+                 */
+                tweets = json.rows.map(function (e){
+                    return e.value.count;
+                });
                 res.render('index', { title: 'Dashboard', location: location, avgSentiment: avgSentiment, date: date,
-                    sentiment: sentiment, prop: prop,});
+                    sentiment: sentiment, tweets: tweets});
             });
             });
         });
