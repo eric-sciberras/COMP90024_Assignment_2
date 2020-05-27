@@ -1,0 +1,303 @@
+extends layout
+
+block content
+    //h1= title
+    div(class="total tweets")
+        .alert.alert-dark(role='alert')
+            | Total Harvested Tweets: #{counts}
+    div(class="canvas3")
+        canvas#tweetsPerLocation(width='1100', height='300')
+            script.
+                var labels = !{JSON.stringify(location)};
+                var values = !{JSON.stringify(tweets)};
+                var ctx3 = document.getElementById('tweetsPerLocation');
+                var tweetsPerLocation = new Chart(ctx3, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'number of #jobseeker/#jobkeeper tweets',
+                            labelColor: 'rgba(23,89,255,0.5)',
+                            data: values,
+                            backgroundColor: 'rgba(23,89,255,0.5)',
+                            borderColor: 'rgba(23,89,255,1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            xAxes: [{
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Location'
+                                }
+                            }],
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                },
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Tweets '
+                                }
+                            }]
+                        },
+                        responsive: false,
+                        maintainAspectRatio: false,
+                        title: {
+                            display: true,
+                            text: 'Location Tweets',
+                            fontSize: 16
+                        },
+                        layout: {
+                            padding: {
+                                left: 50,
+                                right: 0,
+                                bottom: 0,
+                                top: 0
+                            }
+                        },
+                        Legend: {
+                            position: 'right'
+                        }
+                    }
+                });
+    div(class="sentiment")
+        .alert.alert-dark(role='alert')
+            | Sentiment Analysis
+
+    div(class="canvas1")
+        canvas#byLocation(width='600', height='400')
+            script.
+                var labels = !{JSON.stringify(location)};
+                var values = !{JSON.stringify(avgSentiment)};
+                var ctx1 = document.getElementById('byLocation');
+                var byLocation = new Chart(ctx1, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'average sentiment',
+                            labelColor: 'rgba(65,232,155,0.31)',
+                            data: values,
+                            backgroundColor: [
+                                'rgba(65,232,155,0.31)',
+                            ],
+                            borderColor: [
+                                'rgba(65,232,155,1)',
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            xAxes: [{
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Location'
+                                }
+                            }],
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                },
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Sentiment'
+                                }
+                            }]
+                        },
+                        responsive: false,
+                        maintainAspectRatio: false,
+                        title: {
+                            display: true,
+                            text: 'Location Sentiment',
+                            fontSize: 16
+                        },
+                        layout: {
+                            padding: {
+                                left: 50,
+                                right: 0,
+                                bottom: 0,
+                                top: 0
+                            }
+                        }
+                    }
+                });
+    div(class="canvas2")
+        canvas#byDate(width='600', height='400')
+            script.
+                var lables = !{JSON.stringify(date)};
+                var values = !{JSON.stringify(sentiment)};
+                var ctx2 = document.getElementById('byDate');
+                var byDate = new Chart(ctx2, {
+                    type: 'line',
+                    data: {
+                        labels: lables,
+                        datasets: [{
+                            label: 'average sentiment',
+                            data: values,
+                            backgroundColor: [
+                                'rgba(90,197,214,0.35)'
+                            ],
+                            borderColor: [
+                                'rgba(90,197,214,1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            xAxes: [{
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Date'
+                                }
+                            }],
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                },
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Sentiment'
+                                }
+                            }]
+                        },
+                        responsive: false,
+                        maintainAspectRatio: false,
+                        title: {
+                            display: true,
+                            text: 'Historical Sentiment',
+                            fontSize: 16
+                        },
+                        layout: {
+                            padding: {
+                                left: 50,
+                                right: 0,
+                                bottom: 0,
+                                top: 0
+                            }
+                        }
+                    }
+                });
+
+    div(class="aurin")
+        .alert.alert-dark(role='alert')
+            | Labour Market Analysis of Statistical Areas Level 4 (SA4)
+
+    div(class="canvas4")
+        canvas#labourMarket(width='1200', height='700')
+            script.
+                var ctx4 = document.getElementById("labourMarket");
+
+                var adelaide = {
+                    label: 'Adelaide',
+                    labelColor: 'rgba(164,0,59,0.34)',
+                    data: [9200, 9100, 106300, 69600, 31700, 28200, 19400, 50800, 55600,
+                        11000, 12700, 11400, 47500, 5000, 25700, 46400, 18800, 46400, 50100],
+                    backgroundColor: 'rgba(164,0,59,0.2)',
+                    borderColor: 'rgba(164,0,59,1)'
+                };
+
+                var brisbane = {
+                    label: 'Brisbane',
+                    labelColor: 'rgba(255,143,59,0.65)',
+                    data: [4200, 9400, 108000, 64000, 36900, 23600, 28200, 64800, 56400,
+                        16200, 15000, 7700, 47800, 9000, 24800, 47200, 19700, 82600, 41100],
+                    backgroundColor: 'rgba(255,143,59,0.65)'
+                };
+
+                var darwin = {
+                    label: 'Darwin',
+                    labelColor: 'rgba(227,188,46,0.34)',
+                    data: [1500, 2100, 10400, 6800, 4700, 4000, 1500, 6000, 10800, 1400, 2800,
+                        1200, 10700, 3100, 3200, 7000, 1700, 4700, 3200],
+                    backgroundColor: 'rgba(227,188,46,0.34)'
+                };
+
+                var hobart = {
+                    label: 'Hobart',
+                    labelColor: 'rgba(48,164,62,0.58)',
+                    data: [2100, 2000, 18800, 12300, 4400, 4500, 2800, 9200, 10400, 2100, 3700,
+                        2000, 10300, 500, 2700, 9200, 2000, 7300, 6300],
+                    backgroundColor: 'rgba(48,164,62,0.58)'
+                };
+
+                var melbourne = {
+                    label: 'Melbourne',
+                    labelColor: 'rgba(26,159,188,0.64)',
+                    data: [13000, 25600, 296500, 258300, 134300, 95200, 103800, 198000, 225100, 42500,
+                        54800, 55200, 117800, 5600, 80600, 175100, 79600, 252100, 204100],
+                    backgroundColor: 'rgba(26,159,188,0.64)'
+                };
+
+                var perth = {
+                    label: 'Perth',
+                    labelColor: 'rgba(0,34,205,0.67)',
+                    data: [7300, 15900, 138700, 91400, 51200, 41800, 24700, 88200, 97000, 15000,
+                        24300, 13400, 64700, 66700, 34600, 72000, 28300, 79500, 65300],
+                    backgroundColor: 'rgba(0,34,205,0.67)'
+                };
+
+                var sydney = {
+                    label: 'Sydney',
+                    labelColor: 'rgba(125,26,194,0.58)',
+                    data: [9300, 22400, 294300, 254100, 143200, 84500, 166500, 201400, 232000, 54300,
+                        48600, 75400, 113400, 4700, 84200, 163500, 95800, 309500, 181200],
+                    backgroundColor: 'rgba(125,26,194,0.58)'
+                };
+
+                var allStateData = {
+                    labels: ['Agriculture, Forestry And Fishing',
+                        'Electricity, Gas, Water And Waste Services',
+                        'Health Care And Social Assistance',
+                        'Retail Trade',
+                        'Transport, Postal And Warehousing',
+                        'Other Services',
+                        'Financial And Insurance Services',
+                        'Education And Training',
+                        'Construction',
+                        'Rental, Hiring And Real Estate Services',
+                        'Arts And Recreation Services',
+                        'Information Media And Telecommunications',
+                        'Public Administration And Safety',
+                        'Mining',
+                        'Administrative And Support Services',
+                        'Accommodation And Food Services',
+                        'Wholesale Trade',
+                        'Professional, Scientific And Technical Services',
+                        'Manufacturing'],
+                    datasets: [adelaide, brisbane, darwin, hobart, melbourne, perth, sydney]
+                };
+
+                var chartOptions = {
+                    scales: {
+                        xAxes: [{
+                            barPercentage: 1,
+                            categoryPercentage: 0.6,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Industry Types'
+                            }
+                        }],
+                        yAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Number of Employees'
+                            }
+                        }]
+                    },
+                    title: {
+                        display: true,
+                        text: 'August 2018 Labour Market',
+                        fontSize: 16
+                    },
+                    responsive: false,
+                };
+
+                var labourMarket = new Chart(ctx4, {
+                    type: 'bar',
+                    data: allStateData,
+                    options: chartOptions
+                });
