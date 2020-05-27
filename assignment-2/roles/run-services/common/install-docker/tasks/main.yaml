@@ -74,31 +74,19 @@
       Environment="HTTPS_PROXY=http://wwwproxy.unimelb.edu.au:8000/"
       Environment="NO_PROXY=localhost,127.0.0.1,localaddress,172.16.0.0/12,.melbourne.rc.nectar.org.au,.storage.unimelb.edu.au,.cloud.unimelb.edu.au"
 
-
 - name: Docker config foler
   become: yes
   file:
-    path: "$HOME.docker"
+    path: .docker/
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     recurse: yes
     state: directory
 
 - name: Add proxy configuration to docker config file
-  become: yes  
-  blockinfile:
-    path: $HOME/.docker/config.json
-    create: yes
-    block: |
-      {
-        "proxies": {
-        "default": {
-          "httpProxy": "http://wwwproxy.unimelb.edu.au:8000",
-          "httpsProxy": "http://wwwproxy.unimelb.edu.au:8000",
-          "noProxy": "localhost,127.0.0.1,localaddress,172.16.0.0/12,.melbourne.rc.nectar.org.au,.storage.unimelb.edu.au,.cloud.unimelb.edu.au"
-          }
-        }
-      }
+  copy:
+    src: files/config.json
+    dest: .docker/config.json 
 
 - name: Restart Docker service to load proxy settings
   become: yes

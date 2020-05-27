@@ -10,7 +10,7 @@ def process_tweet(tweet,city):
         sentiment = analyser.polarity_scores(tweet['text'])
     
     tweet['sentiment'] = sentiment['compound']
-    tweet['city'] = city
+    tweet['location'] = city
     return tweet
 
 

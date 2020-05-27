@@ -10,12 +10,13 @@ load_dotenv()
 COUCH_URL = os.getenv("COUCHDB_URL")
 USERNAME = os.getenv("COUCHDB_USERNAME")
 PASSWORD = os.getenv("COUCHDB_PASSWORD")
+DB_NAME = os.getenv("COUCHDB_DB_NAME")
 
 couch = CouchDB(USERNAME,PASSWORD,url=COUCH_URL, connect=True, auto_renew=True)
 
-couch.create_database('twitter_data')
+couch.create_database(DB_NAME)
 couch.create_database('twitter_harvester_checkpoint')
-tweets_db = couch['twitter_data']
+tweets_db = couch[DB_NAME]
 harvester_checkpoint = couch['twitter_harvester_checkpoint']
 
 def export_tweet(tweet):
@@ -44,3 +45,14 @@ def save_checkpoint(city, id):
         checkpoint['id'] = id
         checkpoint.save()
     return
+
+# For testing locally
+# import sys
+# import json
+# COUCH_URL = "172.26.133.168:5984"
+# USERNAME = "admin"
+# PASSWORD = "password"
+# with open(sys.argv[1],'r') as f:
+#     for (i,tweet) in enumerate(f.readlines()):
+#         # print(i)
+#         export_tweet(json.loads(tweet))

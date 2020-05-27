@@ -26,6 +26,9 @@
   pip:
     requirements: /opt/twitter-harvester/requirements.txt
 
+- pause:
+    minutes: 5
+
 - name: Start Twitter Harvester
   shell: ( ( nohup python3 /opt/twitter-harvester/twitter_stream.py 1>/dev/null 2>&1 ) & )
   environment:
@@ -37,5 +40,6 @@
     COUCHDB_URL: http://localhost:{{ couchdb_port }}
     COUCHDB_USERNAME: "{{ couchdb_username }}"
     COUCHDB_PASSWORD: "{{ couchdb_password }}"
+    COUCHDB_DB_NAME:  "{{ couchdb_db_name }}"
     HARVESTER_ID: "stream_harvester_{{ host_index }}"
     PING_EVERY_X_TWEETS: "{{ ping_every_x_tweets }}"

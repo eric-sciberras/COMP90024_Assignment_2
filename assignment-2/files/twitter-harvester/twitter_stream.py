@@ -16,6 +16,9 @@ from tweepy.streaming import StreamListener
 import time
 
 # Our modules
+import utils.wait_for_connection as wait_for_connection
+# Before we proceed wait for connection to the internet
+wait_for_connection.wait()
 import utils.twitter_filters as twitter_filters
 from utils.process_tweets import process_tweet
 from utils.slack_integration import post_slack_message
@@ -32,6 +35,8 @@ CONSUMER_KEY = os.getenv("CONSUMER_KEY")
 CONSUMER_SECRET = os.getenv("CONSUMER_SECRET")
 HARVESTER_ID = os.getenv("HARVESTER_ID")
 PING_EVERY_X_TWEETS = os.getenv("PING_EVERY_X_TWEETS")
+
+
 
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)

@@ -1,0 +1,48 @@
+---
+
+- name: Create Database
+  uri:
+    url: http://{{ groups['couchdb_instances'][0] }}:{{ couchdb_port }}/{{ couchdb_db_name }}
+    method: PUT
+    user: "{{ couchdb_username }}"
+    password: "{{ couchdb_password }}"
+    force_basic_auth: yes
+    status_code: 201
+
+- name: Create view
+  uri:
+    url: http://{{ groups['couchdb_instances'][0] }}:{{ couchdb_port }}/{{ couchdb_db_name }}/_design/byDate
+    method: PUT
+    user: "{{ couchdb_username }}"
+    password: "{{ couchdb_password }}"
+    headers:
+      Content-Type: "application/json"
+      Accept: "application/json"
+    force_basic_auth: yes
+    body:
+      id: "_design/byDate"
+      views:
+        date-sentiment: 
+          map: "function (doc) {var dateobject = new Date(doc.created_at);var created_at = dateobject.toDateString();emit(created_at, doc.sentiment);}"
+          reduce: "_stats"
+    body_format: json
+    status_code: 201
+
+- name: Create view
+  uri:
+    url: http://{{ groups['couchdb_instances'][0] }}:{{ couchdb_port }}/{{ couchdb_db_name }}/_design/byLocation
+    method: PUT
+    user: "{{ couchdb_username }}"
+    password: "{{ couchdb_password }}"
+    headers:
+      Content-Type: "application/json"
+      Accept: "application/json"
+    force_basic_auth: yes
+    body:
+      id: "_design/byLocation"
+      views:
+        location-sentiment: 
+          map: "function (doc) {emit(doc.location, doc.sentiment);}"
+          reduce: "_stats"
+    body_format: json
+    status_code: 201

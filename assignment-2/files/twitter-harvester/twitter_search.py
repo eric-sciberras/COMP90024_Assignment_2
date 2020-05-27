@@ -14,10 +14,14 @@ import itertools
 # logging.getLogger().setLevel(logging.DEBUG)
 
 # Our modules
+import utils.wait_for_connection as wait_for_connection
+# Before we proceed wait for connection to the internet
+wait_for_connection.wait()
 import utils.twitter_filters as twitter_filters
 from utils.process_tweets import process_tweet
 from utils.slack_integration import post_slack_message
 import utils.couchdb_driver as couchdb_driver
+
 
 # load env vars from .env file
 load_dotenv()
@@ -30,6 +34,8 @@ CONSUMER_KEY = os.getenv("CONSUMER_KEY")
 CONSUMER_SECRET = os.getenv("CONSUMER_SECRET")
 HARVESTER_ID = os.getenv("HARVESTER_ID")
 PING_EVERY_X_TWEETS = os.getenv("PING_EVERY_X_TWEETS")
+
+
 
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
@@ -61,6 +67,7 @@ while True:
     since_id = couchdb_driver.load_checkpoint(f'{city["name"]}_since_id')
 
     for i in itertools.count():
+        tweets = ""
         try:
             logging.info(f'calling twitter search api')
             tweets = api.search(q=search_query, lang="en", count=100, tweet_mode='extended',
