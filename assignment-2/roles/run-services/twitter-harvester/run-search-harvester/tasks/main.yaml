@@ -30,8 +30,7 @@
     minutes: 5
 
 - name: Start Twitter Harvester
-  shell: ( nohup python3 /opt/twitter-harvester/twitter_search.py ) &
-  # shell: python3 /opt/twitter-harvester/twitter_search.py
+  shell: ( ( nohup python3 /opt/twitter-harvester/twitter_search.py 1>/dev/null 2>&1 ) & )
   environment:
     ACCESS_TOKEN: "{{ twitter_credentials.access_token[ host_index | int ] }}"
     ACCESS_TOKEN_SECRET: "{{ twitter_credentials.access_token_secret[ host_index | int ] }}"
