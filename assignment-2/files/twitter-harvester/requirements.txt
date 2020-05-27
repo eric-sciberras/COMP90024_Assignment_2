@@ -1,0 +1,5 @@
+cloudant==2.13.0
+requests==2.18.4
+tweepy==3.8.0
+python-dotenv==0.13.0
+vaderSentiment==3.3.2

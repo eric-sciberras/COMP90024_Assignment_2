@@ -1,0 +1,96 @@
+---
+# 1. Create The Instances
+
+# A. couchdb-twitter-harvester instances 
+
+- hosts: localhost
+  roles:
+    - role: build-instances/openstack-common
+
+- hosts: localhost
+  vars:
+    host_group_name:
+      - couchdb_instances
+      - twitter_harvester_instances
+  vars_files:
+    - host_vars/nectar-couchdb-twitter-harvester.yaml
+  gather_facts: true
+  roles:
+    - role: build-instances/openstack-volume
+    - role: build-instances/openstack-security-group
+    - role: build-instances/openstack-instance
+
+# B. Dashboard instance 
+
+- hosts: localhost
+  vars:
+    host_group_name:
+      - dashboard_instances
+  vars_files:
+    - host_vars/nectar-dashboard.yaml
+  gather_facts: true
+  roles:
+    - role: build-instances/openstack-security-group
+    - role: build-instances/openstack-instance
+
+# 2. Install, run and configure couchdb instances
+
+# A. Install, run couchdb
+
+- hosts: couchdb_instances
+  gather_facts: true
+  vars_files:
+    - host_vars/couchdb.yaml
+  roles:
+    - role: run-services/common/add-proxy
+    - role: run-services/common/attach-volumes-to-docker
+    - role: run-services/common/install-docker
+    - role: run-services/couchdb/run-docker-compose
+
+# B. Configure the couchdb cluster
+
+- hosts: localhost
+  gather_facts: true
+  vars_files:
+    - host_vars/couchdb.yaml
+  roles:
+    - role: post-run-configure/couchdb/configure-cluster
+    - role: post-run-configure/couchdb/create-db-and-views
+
+# 3. Install and run twitter harvesters
+
+  # A. Stream Twitter-harvester
+
+- hosts: twitter_harvester_instances[0]
+  gather_facts: true
+  vars_files:
+    - host_vars/twitter-harvester.yaml
+    - host_vars/couchdb.yaml
+  roles:
+    - role: run-services/common/add-proxy
+    - role: run-services/twitter-harvester/install-dependencies
+    - role: run-services/twitter-harvester/run-stream-harvester
+  
+  # B. Search Twitter-harvester
+
+- hosts: twitter_harvester_instances:!twitter_harvester_instances[0]
+  gather_facts: true
+  vars_files:
+    - host_vars/twitter-harvester.yaml
+    - host_vars/couchdb.yaml
+  roles:
+    - role: run-services/common/add-proxy
+    - role: run-services/twitter-harvester/install-dependencies
+    - role: run-services/twitter-harvester/run-search-harvester
+
+# 4. Install and run Dashboard
+
+- hosts: dashboard_instances
+  gather_facts: true
+  vars_files:
+    - host_vars/couchdb.yaml
+  roles:
+    - role: run-services/common/add-proxy
+    - role: run-services/common/install-docker
+    - role: run-services/dashboard/build-docker-image
+    - role: run-services/dashboard/run-docker-image

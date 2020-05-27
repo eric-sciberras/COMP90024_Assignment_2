@@ -1,0 +1,74 @@
+---
+- name: Enable Cluster Mode
+  uri:
+    url: http://{{ groups['couchdb_instances'][0] }}:{{ couchdb_port }}/_cluster_setup
+    method: POST
+    user: "{{ couchdb_username }}"
+    password: "{{ couchdb_password }}"
+    headers:
+      Content-Type: "application/json"
+      Accept: "application/json"
+    force_basic_auth: yes
+    body:
+      action: "enable_cluster"
+      bind_address: "0.0.0.0"
+      username: "{{ couchdb_username }}"
+      password: "{{ couchdb_password }}"
+      port: "{{ couchdb_port }}"
+      remote_node: "{{ item }}"
+      node_count: "{{ ansible_loop.length }}"
+      remote_current_user: "{{ couchdb_username }}"
+      remote_current_password: "{{ couchdb_password }}"
+    body_format: json
+    status_code: 201
+  with_items: "{{ groups['couchdb_instances'] }}"
+  when: item != groups['couchdb_instances'][0]
+  loop_control:
+    extended: yes
+
+- name: Add Node
+  uri:
+    url: http://{{ groups['couchdb_instances'][0] }}:{{ couchdb_port }}/_cluster_setup
+    method: POST
+    user: "{{ couchdb_username }}"
+    password: "{{ couchdb_password }}"
+    headers:
+      Content-Type: "application/json"
+      Accept: "application/json"
+    force_basic_auth: yes
+    body:
+      action: "add_node"
+      username: "{{ couchdb_username }}"
+      password: "{{ couchdb_password }}"
+      port: "{{ couchdb_port }}"
+      host: "{{ item }}"
+    body_format: json
+    status_code: 201
+  with_items: "{{ groups['couchdb_instances'] }}"
+  when: item != groups['couchdb_instances'][0]
+  loop_control:
+    extended: yes
+
+- name: Send empty GET request to prevent error
+  uri:
+    url: http://{{ groups['couchdb_instances'][0] }}:{{ couchdb_port }}/
+    method: GET
+    user: "{{ couchdb_username }}"
+    password: "{{ couchdb_password }}"
+    force_basic_auth: yes
+    status_code: 200
+
+- name: Finish Cluster
+  uri:
+    url: http://{{ groups['couchdb_instances'][0] }}:{{ couchdb_port }}/_cluster_setup
+    method: POST
+    user: "{{ couchdb_username }}"
+    password: "{{ couchdb_password }}"
+    headers:
+      Content-Type: "application/json"
+      Accept: "application/json"
+    force_basic_auth: yes
+    body:
+      action: "finish_cluster"
+    body_format: json
+    status_code: 201

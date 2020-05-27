@@ -1,0 +1,17 @@
+---
+
+- name: Start a container
+  become: yes
+  docker_container:
+    name: web_dashboard
+    image: dashboard
+    state: started
+    restart: yes
+    ports:
+     - "80:80"
+    env:
+      COUCHDB_URL: "{{ groups['couchdb_instances'][0] }}"
+      COUCHDB_PORT: "{{ couchdb_port }}"
+      COUCHDB_USERNAME: "{{ couchdb_username }}"
+      COUCHDB_PASSWORD: "{{ couchdb_password }}"
+      PORT: "80"
