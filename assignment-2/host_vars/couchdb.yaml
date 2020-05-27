@@ -1,0 +1,12 @@
+---
+
+volumes:
+  - device: /dev/vdb
+    mountpoint: /var/lib/docker
+
+couchdb_dir: couchdb
+couchdb_secret: a192aeb9904e6590849337933b000c99
+couchdb_username: admin
+couchdb_password: password
+couchdb_port: "5984"
+couchdb_db_name: twitter_data

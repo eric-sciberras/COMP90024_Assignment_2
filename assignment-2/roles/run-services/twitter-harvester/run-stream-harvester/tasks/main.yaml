@@ -1,0 +1,45 @@
+---
+
+# Kill twitter harvester if currently running
+- name: Get running processes list from remote host
+  ignore_errors: yes
+  shell: "ps -few | grep -e twitter_search.py -e twitter_stream.py | awk '{print $2}'"
+  register: running_processes
+
+- name: Kill running processes
+  ignore_errors: yes
+  shell: "kill {{ item }}"
+  with_items: "{{ running_processes.stdout_lines }}"
+
+- name: Retrive index of host
+  set_fact:
+    host_index: "{{ play_hosts.index(inventory_hostname) }}"
+
+- name: Copy Twitter Harvester code
+  become: yes
+  copy:
+    src: "{{playbook_dir}}/files/twitter-harvester"
+    dest: /opt
+
+- name: Install Twitter Harvester dependencies
+  become: yes
+  pip:
+    requirements: /opt/twitter-harvester/requirements.txt
+
+- pause:
+    minutes: 5
+
+- name: Start Twitter Harvester
+  shell: ( ( nohup python3 /opt/twitter-harvester/twitter_stream.py 1>/dev/null 2>&1 ) & )
+  environment:
+    ACCESS_TOKEN: "{{ twitter_credentials.access_token[ host_index | int ] }}"
+    ACCESS_TOKEN_SECRET: "{{ twitter_credentials.access_token_secret[ host_index | int ] }}"
+    CONSUMER_KEY: "{{ twitter_credentials.consumer_key[ host_index | int ] }}"
+    CONSUMER_SECRET: "{{ twitter_credentials.consumer_secret[ host_index | int ] }}"
+    SLACK_WEBHOOK_URL: "{{ slack_webhook_url }}"
+    COUCHDB_URL: http://localhost:{{ couchdb_port }}
+    COUCHDB_USERNAME: "{{ couchdb_username }}"
+    COUCHDB_PASSWORD: "{{ couchdb_password }}"
+    COUCHDB_DB_NAME:  "{{ couchdb_db_name }}"
+    HARVESTER_ID: "stream_harvester_{{ host_index }}"
+    PING_EVERY_X_TWEETS: "{{ ping_every_x_tweets }}"

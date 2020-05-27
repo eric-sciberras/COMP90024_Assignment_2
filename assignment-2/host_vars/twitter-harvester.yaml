@@ -1,0 +1,22 @@
+---
+
+twitter_credentials:
+  access_token:
+    - 1
+    - 2
+    - 3
+  access_token_secret:
+    - 1
+    - 2
+    - 3
+  consumer_key:
+    - 1
+    - 2
+    - 3
+  consumer_secret:
+    - 1
+    - 2
+    - 3
+
+slack_webhook_url:
+ping_every_x_tweets: 1000

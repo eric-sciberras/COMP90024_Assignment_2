@@ -1,0 +1,21 @@
+---
+
+- name: Copy Dashboard code
+  become: yes
+  copy:
+    src: "{{playbook_dir}}/files/dashboard"
+    dest: /opt
+
+- name: Build image
+  become: yes
+  docker_image:
+    name: dashboard
+    build:
+      path: /opt/dashboard
+      args:
+        HTTP_PROXY: "http://wwwproxy.unimelb.edu.au:8000/"
+        HTTPS_PROXY: "http://wwwproxy.unimelb.edu.au:8000/"
+        NO_PROXY: "localhost,127.0.0.1,localaddress,172.16.0.0/12,.melbourne.rc.nectar.org.au,.storage.unimelb.edu.au,.cloud.unimelb.edu.au"
+    source: build
+
+
