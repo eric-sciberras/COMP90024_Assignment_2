@@ -62,3 +62,7 @@ twitter_credentials:
     - <consumer_secret_3>
 ```
 3. For slack integration, In the same file add a slack webhook url in the `slack_webhook_url` field.
+4. in the `assignment-2` folder run 
+   ```
+   ./assignment-2.sh
+   ```
