@@ -4,8 +4,9 @@ USER root
 
 # Define environment variables
 ENV APP_DIR /usr/src/app
-ENV PORT 3000
+ENV PORT 80
 ENV COUCHDB_URL localhost
+ENV COUCHDB_PORT 5984
 ENV COUCHDB_USERNAME admin
 ENV COUCHDB_PASSWORD password
 
